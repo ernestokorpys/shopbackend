@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ernestokorpys/shopbackend/utils"
-
 	"github.com/ernestokorpys/shopbackend/models"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -22,16 +20,17 @@ func RegisterUser(c *fiber.Ctx) error {
 	}
 
 	// Verificar si hay campos adicionales en el JSON
-	var stringData map[string]string
-	for key, value := range data {
-		stringData[key] = fmt.Sprintf("%v", value)
+	expectedKeys := map[string]bool{
+		"userName": true,
+		"email":    true,
+		"password": true,
 	}
-
-	expectedFields := []string{"userName", "email", "password"}
-	if err := utils.CheckExpectedFields(stringData, expectedFields); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+	for key := range data {
+		if !expectedKeys[key] {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": fmt.Sprintf("Unexpected field '%s' in request body", key),
+			})
+		}
 	}
 	// Obtener el cliente de MongoDB de la variable de contexto
 	client := c.Locals("mongoClient").(*mongo.Client)
