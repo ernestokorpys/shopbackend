@@ -23,7 +23,7 @@ func GetProducts(c *fiber.Ctx) error {
 	}
 
 	// Verificar el token de autorización
-	userID, err := util.VerifyJwt(token)
+	_, err := util.VerifyJwt(token)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Token de autorización inválido",

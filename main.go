@@ -13,6 +13,10 @@ import (
 
 func main() {
 	client := database.ConnectDB() //cliente de mongo.DB
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
 	port := os.Getenv("PORT")
 	app := fiber.New()

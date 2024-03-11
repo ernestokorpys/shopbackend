@@ -12,6 +12,10 @@ import (
 )
 
 func ConnectDB() *mongo.Client {
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
 	uri := os.Getenv("MONGODB_URI")
 
