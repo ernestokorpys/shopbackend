@@ -8,6 +8,7 @@ import (
 	"github.com/ernestokorpys/shopbackend/routes"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors" // Importa el middleware CORS de Fiber
 )
 
 func main() {
@@ -24,6 +25,12 @@ func main() {
 
 	// Middleware para establecer el cliente de MongoDB en el contexto
 	app.Use(middleware.MongoDBClientSetter(client))
+
+	// Configuración de CORS
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:5173", // Permite solicitudes desde este origen
+		AllowMethods: "GET,POST,PUT,DELETE",   // Permite estos métodos HTTP
+	}))
 
 	routes.Setup(app)      //maneja las solicitudes entrantes
 	app.Listen(":" + port) //Escucha las solicitudes del puerto constantemente
