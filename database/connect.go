@@ -12,6 +12,7 @@ import (
 )
 
 func ConnectDB() *mongo.Client {
+
 	uri := os.Getenv("MONGODB_URI")
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))

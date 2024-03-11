@@ -3,8 +3,10 @@ package controller
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/ernestokorpys/shopbackend/models"
+	"github.com/ernestokorpys/shopbackend/util"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -35,6 +37,22 @@ func Login(c *fiber.Ctx) error {
 			"message": "Contraseña incorrecta",
 		})
 	}
+
+	token, err := util.GenerateJwt(user.ID.Hex()) // Convertir ObjectID a string
+	if err != nil {
+		c.Status(fiber.StatusInternalServerError)
+		return err
+	}
+
+	cookie := fiber.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+	}
+
+	//guarda y mantiene la sesion iniciada en base al token provisto, si este caduca cierra la sesion
+	c.Cookie(&cookie)
 
 	return c.JSON(fiber.Map{
 		"massage": "Succesful login",

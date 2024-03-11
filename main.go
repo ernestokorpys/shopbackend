@@ -13,10 +13,7 @@ import (
 
 func main() {
 	client := database.ConnectDB() //cliente de mongo.DB
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	log.Fatal("Error")
-	// }
+
 	port := os.Getenv("PORT")
 	app := fiber.New()
 	// Middleware de recuperación de errores

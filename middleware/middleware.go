@@ -3,6 +3,7 @@ package middleware
 import (
 	"log"
 
+	"github.com/ernestokorpys/shopbackend/util"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -27,4 +28,15 @@ func MongoDBClientSetter(client *mongo.Client) fiber.Handler {
 		c.Locals("mongoClient", client)
 		return c.Next()
 	}
+}
+
+func IsAuthenticate(c *fiber.Ctx) error {
+	cookie := c.Cookies("jwt")
+	if _, err := util.Parsejwt(cookie); err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"message": "unautheticated",
+		})
+	}
+	return c.Next()
 }
