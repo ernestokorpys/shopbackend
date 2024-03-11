@@ -1,6 +1,7 @@
 package util
 
 import (
+	"errors"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -26,5 +27,29 @@ func Parsejwt(cookie string) (string, error) {
 		return "", err
 	}
 	claims := token.Claims.(*jwt.StandardClaims)
+	return claims.Issuer, nil
+}
+
+func VerifyJwt(tokenString string) (string, error) {
+	// Parsear el token con las reclamaciones personalizadas que necesitas
+	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SecretKey), nil
+	})
+	if err != nil {
+		return "", err // Error al parsear el token
+	}
+
+	// Verificar si el token es válido
+	if !token.Valid {
+		return "", errors.New("Token inválido")
+	}
+
+	// Obtener las reclamaciones (claims) del token
+	claims, ok := token.Claims.(*jwt.StandardClaims)
+	if !ok {
+		return "", errors.New("No se pudieron obtener las reclamaciones del token")
+	}
+
+	// Retornar el ID del emisor (issuer) desde las reclamaciones del token
 	return claims.Issuer, nil
 }
