@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/ernestokorpys/shopbackend/models"
-	"github.com/ernestokorpys/shopbackend/util"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,20 +14,6 @@ import (
 
 func GetProducts(c *fiber.Ctx) error {
 	// Obtener el token de autorización del encabezado de la solicitud
-	token := c.Get("Authorization")
-	if token == "" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "No se proporcionó el token de autorización",
-		})
-	}
-
-	// Verificar el token de autorización
-	_, err := util.VerifyJwt(token)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Token de autorización inválido",
-		})
-	}
 
 	page, err := strconv.Atoi(c.Query("page", "1")) //se fija el parametro page en la url si no tine asume que es 1
 	if err != nil {
