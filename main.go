@@ -25,8 +25,10 @@ func main() {
 
 	// Configuración de CORS
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173", // Permite solicitudes desde este origen
-		AllowMethods: "GET,POST,PUT,DELETE",   // Permite estos métodos HTTP
+		AllowOrigins:     "http://localhost:5173", // Permite solicitudes desde este origen
+		AllowMethods:     "GET,POST,PUT,DELETE",   // Permite estos métodos HTTP
+		AllowCredentials: true,                    // Permite credenciales (cookies)
+
 	}))
 
 	routes.Setup(app)      //maneja las solicitudes entrantes
