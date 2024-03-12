@@ -12,4 +12,5 @@ func Setup(app *fiber.App) {
 	app.Use(middleware.IsAuthenticate)
 	app.Post("/api/addproduct", controller.AddProduct)
 	app.Get("/api/products", controller.GetProducts)
+	app.Post("/api/logout", controller.Logout) // Nueva ruta para cerrar sesión
 }
