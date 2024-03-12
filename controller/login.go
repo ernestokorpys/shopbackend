@@ -49,6 +49,7 @@ func Login(c *fiber.Ctx) error {
 		Value:    token,
 		Expires:  time.Now().Add(time.Hour * 24),
 		HTTPOnly: true,
+		SameSite: "None",
 	}
 
 	//guarda y mantiene la sesion iniciada en base al token provisto, si este caduca cierra la sesion
