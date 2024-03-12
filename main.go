@@ -1,11 +1,13 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/ernestokorpys/shopbackend/database"
 	"github.com/ernestokorpys/shopbackend/middleware"
 	"github.com/ernestokorpys/shopbackend/routes"
+	"github.com/joho/godotenv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors" // Importa el middleware CORS de Fiber
@@ -19,6 +21,10 @@ func main() {
 			log.Fatal("Error loading .env file")
 		}
 	*/
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	port := os.Getenv("PORT")
 	app := fiber.New()
 	// Middleware de recuperación de errores
@@ -30,10 +36,10 @@ func main() {
 
 	// Configuración de CORS
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:5173",    // Permite solicitudes desde este origen
-		AllowMethods:     "GET,POST,PUT,DELETE",      // Permite estos métodos HTTP
-		AllowCredentials: true,                       // Permite credenciales (cookies)
-		AllowHeaders:     "Content-Type, Set-Cookie", // Permitir los encabezados necesarios
+		AllowOrigins:     "http://localhost:5173", // Permite solicitudes desde este origen
+		AllowMethods:     "GET,POST,PUT,DELETE",   // Permite estos métodos HTTP
+		AllowCredentials: true,                    // Permite credenciales (cookies)
+		AllowHeaders:     "Content-Type",          // Permitir los encabezados necesarios
 	}))
 
 	routes.Setup(app)      //maneja las solicitudes entrantes
