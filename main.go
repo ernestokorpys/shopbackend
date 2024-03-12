@@ -1,13 +1,11 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"github.com/ernestokorpys/shopbackend/database"
 	"github.com/ernestokorpys/shopbackend/middleware"
 	"github.com/ernestokorpys/shopbackend/routes"
-	"github.com/joho/godotenv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors" // Importa el middleware CORS de Fiber
@@ -15,11 +13,12 @@ import (
 
 func main() {
 	client := database.ConnectDB() //cliente de mongo.DB
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
+	/*
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
+	*/
 	port := os.Getenv("PORT")
 	app := fiber.New()
 	// Middleware de recuperación de errores
