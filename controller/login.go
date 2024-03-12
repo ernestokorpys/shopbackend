@@ -49,9 +49,9 @@ func Login(c *fiber.Ctx) error {
 		Value:    token,
 		Expires:  time.Now().Add(time.Hour * 24),
 		HTTPOnly: true,
-		// SameSite: "None",
+		SameSite: "None", // Permitir cookie en solicitudes CORS desde origen cruzado
+		Secure:   true,   // Solo enviar cookie en conexiones HTTPS
 	}
-
 	//guarda y mantiene la sesion iniciada en base al token provisto, si este caduca cierra la sesion
 	c.Cookie(&cookie)
 
