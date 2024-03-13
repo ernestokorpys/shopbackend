@@ -13,7 +13,10 @@ func Logout(c *fiber.Ctx) error {
 		Value:    "",
 		Expires:  time.Now().Add(-time.Hour),
 		HTTPOnly: true,
+		SameSite: "None", // Permitir cookie en solicitudes CORS desde origen cruzado
+		Secure:   true,
 	}
+
 	c.Cookie(&cookie) // Agregar la cookie a la
 	// Puedes enviar una respuesta indicando que el logout fue exitoso
 	return c.JSON(fiber.Map{
