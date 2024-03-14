@@ -32,9 +32,6 @@ func GetShopCar(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"data":    user.ShopCar.Products,
-		"test":    user.UserName,
-		"test2":   user.Email,
-		"Shopcar": user.ShopCar,
+		"data": user.ShopCar.Products,
 	})
 }

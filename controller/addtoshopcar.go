@@ -18,23 +18,23 @@ type RequestData struct {
 
 func AddToShopCar(c *fiber.Ctx) error {
 	// Obtener el ID del usuario autenticado
+	cookie := c.Cookies("jwt")
+	userID, _ := util.Parsejwt(cookie)
+	objectID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return c.Status(400).SendString("ID de usuario inválido")
+	}
 
-	var data RequestData // Parsear los datos de la solicitud
+	// Parsear los datos de la solicitud
+	var data struct {
+		ProductID string `json:"productID"`
+	}
 	if err := c.BodyParser(&data); err != nil {
 		return c.Status(400).SendString("Error al analizar el cuerpo de la solicitud")
 	}
 
 	client := c.Locals("mongoClient").(*mongo.Client)
-	// // Obtener la colección de usuarios
 	collection := client.Database("onlineshop").Collection("shopUsers")
-	// User ID search database ---------------------------------------------
-	cookie := c.Cookies("jwt")
-	userID, _ := util.Parsejwt(cookie)
-
-	objectID, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
-		return c.Status(400).SendString("ID de usuario inválido")
-	}
 
 	// Buscar el usuario por su ID
 	filter := bson.M{"_id": objectID}
@@ -44,30 +44,22 @@ func AddToShopCar(c *fiber.Ctx) error {
 		return c.Status(404).SendString("Usuario no encontrado")
 	}
 
-	var productIDs []primitive.ObjectID
-	for _, id := range data.ProductIDs {
-		objectID, err := primitive.ObjectIDFromHex(id)
-		if err != nil {
-			return c.Status(400).SendString("ID de producto inválido")
-		}
-		productIDs = append(productIDs, objectID)
-	}
-	// Obtener los productos correspondientes a los IDs
-	productsCollection := client.Database("onlineshop").Collection("products")
-	cursor, err := productsCollection.Find(context.Background(), bson.M{"_id": bson.M{"$in": productIDs}})
+	// Convertir el ID del producto a ObjectID
+	productID, err := primitive.ObjectIDFromHex(data.ProductID)
 	if err != nil {
-		return c.Status(500).SendString("Error al obtener los productos")
+		return c.Status(400).SendString("ID de producto inválido")
 	}
-	defer cursor.Close(context.Background())
 
-	// Iterar sobre los productos y agregarlos al carrito
-	for cursor.Next(context.Background()) {
-		var product models.Product
-		if err := cursor.Decode(&product); err != nil {
-			return c.Status(500).SendString("Error al decodificar los productos")
-		}
-		user.ShopCar.Products = append(user.ShopCar.Products, product)
+	// Obtener el producto correspondiente al ID
+	productsCollection := client.Database("onlineshop").Collection("products")
+	var product models.Product
+	err = productsCollection.FindOne(context.Background(), bson.M{"_id": productID}).Decode(&product)
+	if err != nil {
+		return c.Status(404).SendString("Producto no encontrado")
 	}
+
+	// Agregar el producto al carrito del usuario
+	user.ShopCar.Products = append(user.ShopCar.Products, product)
 
 	// Actualizar el usuario en la base de datos
 	update := bson.M{"$set": bson.M{"shopCar": user.ShopCar}}
@@ -76,11 +68,7 @@ func AddToShopCar(c *fiber.Ctx) error {
 		return c.Status(500).SendString("Error al actualizar el usuario")
 	}
 
-	// Convertir el ID del usuario a ObjectID
-
 	return c.JSON(fiber.Map{
-		"user":    userID,
-		"data":    data,
-		"message": "Productos agregados al carrito con éxito",
+		"message": "Producto agregado al carrito con éxito",
 	})
 }
