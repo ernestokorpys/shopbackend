@@ -15,4 +15,5 @@ func Setup(app *fiber.App) {
 	app.Get("/api/products", controller.GetProducts)
 	app.Get("/api/getshopcar", controller.GetShopCar)
 	app.Post("/api/logout", controller.Logout)
+	app.Delete("/api/removefromcar/:id", controller.RemoveFromShopCar)
 }
