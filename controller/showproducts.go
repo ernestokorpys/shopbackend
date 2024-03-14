@@ -22,7 +22,7 @@ func GetProducts(c *fiber.Ctx) error {
 		})
 	}
 
-	limit := 2
+	limit := 4
 	offset := (page - 1) * limit
 
 	client := c.Locals("mongoClient").(*mongo.Client)

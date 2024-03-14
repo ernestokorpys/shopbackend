@@ -44,6 +44,9 @@ func Login(c *fiber.Ctx) error {
 		return err
 	}
 
+	//oara trabajar desde postman hay que comentar
+	// SameSite: "None"
+	// Secure:   true,
 	cookie := fiber.Cookie{
 		Name:     "jwt",
 		Value:    token,

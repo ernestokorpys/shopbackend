@@ -33,12 +33,3 @@ type CreditCard struct {
 	ExpirationDate string `bson:"expirationDate"`
 	CVV            string `bson:"cvv"`
 }
-
-// func (user *User) SetPassword(password string) {
-// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-// 	if err != nil {
-// 		log.Println("Error hashing password:", err)
-// 		return
-// 	}
-// 	user.Password = hashedPassword
-// }

@@ -11,6 +11,7 @@ func Setup(app *fiber.App) {
 	app.Post("/api/login", controller.Login)
 	app.Use(middleware.IsAuthenticate)
 	app.Post("/api/addproduct", controller.AddProduct)
+	app.Post("/api/addshopcar", controller.AddToShopCar)
 	app.Get("/api/products", controller.GetProducts)
 	app.Post("/api/logout", controller.Logout)
 }
