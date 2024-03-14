@@ -13,5 +13,6 @@ func Setup(app *fiber.App) {
 	app.Post("/api/addproduct", controller.AddProduct)
 	app.Post("/api/addshopcar", controller.AddToShopCar)
 	app.Get("/api/products", controller.GetProducts)
+	app.Get("/api/getshopcar", controller.GetShopCar)
 	app.Post("/api/logout", controller.Logout)
 }

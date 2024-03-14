@@ -19,6 +19,7 @@ func main() {
 			log.Fatal("Error loading .env file")
 		}
 	*/
+
 	port := os.Getenv("PORT")
 	app := fiber.New()
 	// Middleware de recuperación de errores
