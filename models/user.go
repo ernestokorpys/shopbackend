@@ -23,7 +23,7 @@ type ShopCar struct {
 type Product struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty"`
 	ProductName string             `bson:"productName"`
-	Cost        string             `bson:"cost"`
+	Cost        int64              `bson:"cost"`
 	Picture     string             `bson:"picture"`
 }
 

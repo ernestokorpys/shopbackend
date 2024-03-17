@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/ernestokorpys/shopbackend/models"
 	"github.com/gofiber/fiber/v2"
@@ -32,31 +33,38 @@ func AddProduct(c *fiber.Ctx) error {
 		}
 	}
 
-	// Crear un nuevo usuario con los datos recibidos
-	user := models.Product{
+	// Convertir el campo "cost" del JSON a un entero
+	cost, err := strconv.ParseInt(data["cost"].(string), 10, 64)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid value for 'cost'",
+		})
+	}
+
+	// Crear un nuevo producto con los datos recibidos
+	product := models.Product{
 		ProductName: data["productName"].(string),
-		Cost:        data["cost"].(string),
+		Cost:        cost,
 		Picture:     data["picture"].(string),
 	}
 
 	// Obtener el cliente de MongoDB de la variable de contexto
 	client := c.Locals("mongoClient").(*mongo.Client)
 
-	// Obtener la colección de usuarios
+	// Obtener la colección de productos
 	collection := client.Database("onlineshop").Collection("products")
 
-	// Insertar el nuevo usuario en la base de datos
-	_, err := collection.InsertOne(context.Background(), user)
+	// Insertar el nuevo producto en la base de datos
+	_, err = collection.InsertOne(context.Background(), product)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to insert user into database",
+			"error": "Failed to insert product into database",
 		})
 	}
 
 	// Retornar una respuesta de éxito
-	c.Status(200)
 	return c.JSON(fiber.Map{
-		"user":    user,
+		"product": product,
 		"message": "Product added successfully.",
 	})
 }
