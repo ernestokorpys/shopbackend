@@ -49,7 +49,7 @@ func FilterProducts(c *fiber.Ctx) error {
 		filter["productName"] = bson.M{"$regex": keyword, "$options": "i"}
 	}
 
-	limit := int64(4)
+	limit := int64(8)
 	offset := int64((page - 1) * 4)
 
 	// Realiza la consulta con el filtro para obtener los productos paginados
