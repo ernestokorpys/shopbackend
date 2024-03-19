@@ -31,7 +31,7 @@ func main() {
 
 	// Configuración de CORS
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:5173,https://frontendreact-neon.vercel.app,https://frontendreact-neon.vercel.app/products",
+		AllowOrigins:     "http://localhost:5173,https://frontendreact-neon.vercel.app",
 		AllowMethods:     "GET,POST,PUT,DELETE", // Permite estos métodos HTTP
 		AllowCredentials: true,                  // Permite credenciales (cookies)
 		AllowHeaders:     "Content-Type",        // Permitir los encabezados necesarios
