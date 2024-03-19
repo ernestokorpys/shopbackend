@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"math"
 	"strconv"
 
@@ -14,41 +13,10 @@ import (
 )
 
 func FilterProducts(c *fiber.Ctx) error {
-	var data map[string]interface{}
-	if err := c.BodyParser(&data); err != nil {
-		fmt.Println("Unable to parse Body")
-		return err
-	}
-
 	client := c.Locals("mongoClient").(*mongo.Client)
 	collection := client.Database("onlineshop").Collection("products")
 
 	filter := bson.M{}
-
-	// Añadir filtros según los parámetros recibidos
-	if minCostStr, ok := data["minCost"].(string); ok {
-		minCost, err := strconv.ParseInt(minCostStr, 10, 64)
-		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": "Invalid minCost",
-			})
-		}
-		filter["cost"] = bson.M{"$gte": minCost}
-	}
-
-	if maxCostStr, ok := data["maxCost"].(string); ok {
-		maxCost, err := strconv.ParseInt(maxCostStr, 10, 64)
-		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": "Invalid maxCost",
-			})
-		}
-		filter["cost"] = bson.M{"$lte": maxCost}
-	}
-
-	if keyword, ok := data["keyword"].(string); ok {
-		filter["productName"] = bson.M{"$regex": keyword, "$options": "i"}
-	}
 
 	page, err := strconv.Atoi(c.Query("page", "1"))
 	if err != nil {
@@ -57,10 +25,34 @@ func FilterProducts(c *fiber.Ctx) error {
 		})
 	}
 
+	minCost, err := strconv.Atoi(c.Query("minCost", "0"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid min cost number",
+		})
+	}
+	filter["cost"] = bson.M{"$gte": minCost}
+
+	maxCostStr := c.Query("maxCost", "100000000000") // Valor predeterminado si no se proporciona
+	maxCost, err := strconv.ParseInt(maxCostStr, 10, 64)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid max cost number",
+		})
+	}
+	// Combina los filtros minCost y maxCost para el costo
+	filter["cost"].(bson.M)["$lte"] = maxCost
+
+	keyword := c.Query("keyword", "")
+	if keyword != "" {
+		// Añade el filtro para el nombre del producto utilizando una expresión regular
+		filter["productName"] = bson.M{"$regex": keyword, "$options": "i"}
+	}
+
 	limit := int64(4)
 	offset := int64((page - 1) * 4)
 
-	// Realizar la consulta con el filtro para obtener los productos paginados
+	// Realiza la consulta con el filtro para obtener los productos paginados
 	cursor, err := collection.Find(context.TODO(), filter, &options.FindOptions{
 		Limit: &limit,
 		Skip:  &offset,

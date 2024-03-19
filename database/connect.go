@@ -16,7 +16,6 @@ func ConnectDB() *mongo.Client {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	} */
-
 	uri := os.Getenv("MONGODB_URI")
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
